@@ -1,4 +1,4 @@
-import streamlit as st
+mport streamlit as st
 import pandas as pd
 
 st.set_page_config(page_title="Submission Template", layout="wide")
@@ -22,9 +22,6 @@ stock_data = pd.read_csv(
     "https://github.com/justinjiajia/datafiles/raw/refs/heads/main/stock_data_yf.csv", 
     parse_dates=['Date']
 )
-
- 
- 
 
 st.info("Write your Task 1 code below ...")
 
@@ -90,16 +87,45 @@ st.info("Write your Task 2 code below ...")
 
 # --- STUDENT CODE AREA START ---
 
- 
+# 1. Initialize session state variables
+if 'clicked' not in st.session_state:
+    st.session_state.clicked = False
+if 'url' not in st.session_state:
+    st.session_state.url = ""
 
+# 2. Render the input and button side-by-side
+col1, col2 = st.columns([2, 1], vertical_alignment="bottom")
 
+with col1:
+    url = st.text_input(
+        "Enter the URL of a video",
+        value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    )
 
+with col2:
+    button = st.button("Submit")
 
-# --- STUDENT CODE AREA END ---
+# 3. Handle button click
+if button:
+    st.session_state.clicked = True
+    st.session_state.url = url
 
- 
+# 4. Create the container for the video display
+video_container = st.container(
+    border=True, width=640, height=400, horizontal_alignment="center"
+)
 
-
-
+# 5. Display the video or the info message
+if st.session_state.clicked:
+    with video_container:
+        video_url = st.session_state.url.strip()
+        try:
+            if not video_url.startswith(("http://", "https://")):
+                raise ValueError("Invalid URL")
+            st.video(video_url)
+        except Exception:
+            st.error("Invalid URL or the video cannot be loaded. Please check the URL and try again.")
+else:
+    video_container.info("Please enter a video URL and click Submit to display the video.")
 
 # --- STUDENT CODE AREA END ---
